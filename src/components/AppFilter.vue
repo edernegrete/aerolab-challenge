@@ -4,15 +4,19 @@
     <div class="Filters">
       <p class="Filters-title">Sort by:</p>
       <button
-        v-for="filter in filters"
+        v-for="filter in filters.data"
         :class="[filter.active ? 'active' : 'disabled', 'button']"
         @click="emitFilter(filter.id)">
         {{filter.title}}
       </button>
     </div>
     <div class="Filter-actions">
-      <img src="../assets/icons/arrow-left.svg" class="arrow">
-      <img src="../assets/icons/arrow-right.svg" class="arrow">
+      <img src="../assets/icons/arrow-left.svg" class="arrow"
+      :hidden="filters.config.isFirst"
+      @click="$emit('navigate', 'prev')">
+      <img src="../assets/icons/arrow-right.svg" class="arrow"
+      :hidden="filters.config.isLast"
+      @click="$emit('navigate', 'next')">
     </div>
   </div>
 </template>

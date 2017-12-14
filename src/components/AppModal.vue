@@ -3,6 +3,9 @@
    <div class="modal-mask">
      <div class="modal-wrapper">
        <div class="modal-container">
+         <div class="modal-header">
+            <button class="button" @click="$emit('close')">╳</button>
+         </div>
          <div class="modal-body">
            <slot name="body">
              You don't enough coins to buy anything ☹️
@@ -10,7 +13,7 @@
          </div>
          <div class="modal-footer">
            <slot name="footer">
-             <button class="button button-blue modal-default-button" @click="$emit('close')">
+             <button class="button button-blue" @click="$emit('getCoins')">
                Get More!
              </button>
            </slot>
@@ -57,9 +60,8 @@ export default {
   font-family: Helvetica, Arial, sans-serif;
 }
 
-.modal-header h3 {
-  margin-top: 0;
-  color: #42b983;
+.modal-header {
+  text-align: right;
 }
 
 .modal-body {

@@ -31,6 +31,9 @@ export default {
   .flex-space-between {
     justify-content: space-between;
   }
+  .button {
+    background: #ededed;
+  }
   .AppHeader {
     padding: 1rem;
   }

@@ -32,7 +32,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
   .box {
     max-width: 276px;
     padding: 1rem;

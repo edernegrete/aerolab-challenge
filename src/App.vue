@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div id="app">
     <div class="loading" v-if="loading">
       <spinner/>
     </div>
-    <div id="app" v-else>
+    <div class="store" v-else>
       <div class="app-header">
         <app-header :coins="coins" :name="name"/>
       </div>
@@ -12,7 +12,10 @@
         <span class="app-section">{{section}}</span>
       </div>
       <div class="app-products" v-if="!loading">
-        <app-filter class="app-filter" :filters="filters" @filter="hadleFilter"/>
+        <app-filter class="app-filter"
+          :filters="filters"
+          @filter="hadleFilter"
+          @navigate="pagination"/>
         <div class="app-products-list">
           <app-product
             v-for="product in products"
@@ -31,8 +34,11 @@
         <img src="./assets/loading.gif" alt="">
         <h1>Loading</h1>
       </div>
-      <div class="modal" v-if="!enoughCoins">
-        <app-modal/>
+      <div class="modal" v-if="showModal">
+        <app-modal @close="showModal = false" @getCoins="getMoreCoins"/>
+      </div>
+      <div class="app-help" v-if="!showModal && !enoughCoins">
+        <button class="button button-help" @click="getMoreCoins">Get More Coins</button>
       </div>
     </div>
   </div>
@@ -59,6 +65,7 @@ export default {
     return {
       section: 'Electronics',
       loading: false,
+      showModal: false,
     };
   },
   computed: {
@@ -71,6 +78,9 @@ export default {
     name() {
       return this.$store.getters.getName;
     },
+    currentPage() {
+      return this.$store.getters.currentPage;
+    },
     coins() {
       return this.$store.getters.getCoins;
     },
@@ -78,8 +88,14 @@ export default {
       return this.$store.getters.getEnoughCoins;
     },
   },
+  watch: {
+    enoughCoins(enough) {
+      this.showModal = !enough;
+    },
+  },
   mounted() {
     const initialRequests = [Promise.resolve(getUser()), Promise.resolve(getProducts())];
+    // this.loading = true;
     Promise.all(initialRequests).then((res) => {
       this.$store.dispatch('setUser', res[0]);
       this.$store.dispatch('setProducts', res[1]);
@@ -93,23 +109,24 @@ export default {
       //   productId: data[key],
       // }).then(() => {
       this.$store.dispatch('redeem', data);
-      this.$store.dispatch('setProducts', this.products);
       // });
     },
     hadleFilter(data) {
       this.$store.dispatch('filter', data);
+    },
+    getMoreCoins() {
+      // getCoins().then(res => {
+      // this.store.dispatch('setCoins', res.newPoints);
+      // })
+    },
+    pagination(data) {
+      this.$store.dispatch('setCurrentPage', data);
     },
   },
 };
 </script>
 
 <style>
-  body {
-    margin: 0;
-  }
-  p {
-    margin: 0;
-  }
   .app-image {
     width: 100%;
   }
@@ -135,6 +152,10 @@ export default {
   .app-filter {
     margin-bottom: 1rem;
   }
+  .app-help {
+    position: fixed;
+    bottom: 24px;
+  }
   .button {
     background: #ededed;
     border: none;
@@ -144,6 +165,12 @@ export default {
     padding: 5px;
     width: 67px;
     height: 30px;
+  }
+  .button-help {
+    background: #ff5252;
+    font-size: 1rem;
+    color: white;
+    width: auto;
   }
   .button-blue {
     background: #0ad4fa;
